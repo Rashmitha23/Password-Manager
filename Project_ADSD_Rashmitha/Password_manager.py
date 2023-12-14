@@ -224,27 +224,80 @@ def vaultScreen():
         # Add a button to save changes
         btn_save = Button(update_window, text="Save Changes", command=saveChanges)
         btn_save.grid(row=3, column=0, columnspan=2, pady=10)
+    
+
+
+    # Function to perform search
+    def searchEntries():
+        search_query = search_var.get().lower()
+        cursor.execute("SELECT * FROM vault WHERE LOWER(website) LIKE ? OR LOWER(username) LIKE ? OR LOWER(password) LIKE ?", 
+                       ('%' + search_query + '%', '%' + search_query + '%', '%' + search_query + '%'))
+        results = cursor.fetchall()
+
+        # Clear the existing entries on the screen
+        for widget in window.winfo_children():
+            widget.destroy()
+
+        # Display the search results
+        displayEntries(results)
+
+    def displayEntries(entries):
+        lbl_website = Label(window, text="Website", font=("Arial", 12))
+        lbl_website.grid(row=2, column=0, padx=80)
+        lbl_username = Label(window, text="Username", font=("Arial", 12))
+        lbl_username.grid(row=2, column=1, padx=80)
+        lbl_password = Label(window, text="Password", font=("Arial", 12))
+        lbl_password.grid(row=2, column=2, padx=80)
+
+        # Display entries
+        for i, entry in enumerate(entries, start=3):
+            lbl1 = Label(window, text=entry[1], font=("Arial", 12))
+            lbl1.grid(column=0, row=i)
+            lbl2 = Label(window, text=entry[2], font=("Arial", 12))
+            lbl2.grid(column=1, row=i)
+            lbl3 = Label(window, text=entry[3], font=("Arial", 12))
+            lbl3.grid(column=2, row=i)
+
+            # Buttons for delete and update
+            btn_delete = Button(window, text="Delete", command=partial(removeEntry, entry[0]), bg='#90EE90', fg='black')
+            btn_delete.grid(column=3, row=i, pady=10, padx=50)
+
+            btn_update = Button(window, text="Update", command=lambda e=entry[0]: updateEntry(e), bg='#90EE90', fg='black')
+            btn_update.grid(column=4, row=i, pady=10, padx=50)
+
+    # Add a search bar and button
+    search_var = StringVar()
+    search_entry = Entry(window, textvariable=search_var, width=30, bg='#90EE90')
+    search_entry.grid(row=1, column=1, padx=10, pady=10)
+
+    search_button = Button(window, text="Search", command=searchEntries, bg='#90EE90', fg='black')
+    search_button.grid(row=1, column=2, pady=10)
+
+    # Display all entries initially
+    cursor.execute('SELECT * FROM vault')
+    displayEntries(cursor.fetchall())
+
+
+
         
 
     #creating window screen for passwords storage for user.
     window.geometry('750x550')
     window.resizable(height=None, width=None)
-    lbl = Label(window, text="Password Manager", font=("Arial", 20))
-    lbl.grid(column=1)
-    lbl.config(anchor=CENTER)
+    
     
     #Button to add new entry.
     btn = Button(window, text="Add a New Entry", command=addEntry, bg='#90EE90', fg='black')
-    btn.grid(column=1, pady=10)
+    btn.grid(column=1, pady=(10,20))
     
 
     # Here, I used grid to create columns for website,username,password.
     lbl = Label(window, text="Website")
-    lbl.grid(row=2, column=0, padx=80)
+    lbl.grid(row=2, column=0, pady=(20,10))
     lbl = Label(window, text="Username")
-    lbl.grid(row=2, column=1, padx=80)
+    lbl.grid(row=2, column=1, pady=(20,10))
     lbl = Label(window, text="Password")
-    lbl.grid(row=2, column=2, padx=80)
+    lbl.grid(row=2, column=2, pady=(20,10))
     #To Retrive data.
     cursor.execute('SELECT * FROM vault')
     if (cursor.fetchall() != None):
