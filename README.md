@@ -3,7 +3,7 @@
 
 A secure and efficient **Password Manager Application** developed to simplify credential management while ensuring maximum data protection. This application offers features like strong password generation, encrypted storage, and an intuitive user interface for adding, editing, and deleting passwords.  
 
----
+--- 
 
 ## 🚀 Features  
 - **Strong Password Generation**: Create secure and random passwords to enhance account security.  
